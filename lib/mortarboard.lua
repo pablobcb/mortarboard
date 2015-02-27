@@ -19,10 +19,9 @@ local requestHandler = function (app_middlewares, routes)
     local request_chain = {}
     request_chain = table.concatenate(request_chain, app_middlewares)
 
-    local current_middleware_index = 0
-
     -- function that will consume asynchronously 
     -- the middlewares of the request chain
+    local current_middleware_index = 0
     local function continue()
       current_middleware_index = current_middleware_index + 1
       local current_middleware = request_chain[current_middleware_index]
