@@ -1,4 +1,4 @@
-local mb = require('./src/mortarboard')
+local mb = require('../lib/mortarboard')
 local app = mb()
 
 local m1 = function(req, res, continue)
