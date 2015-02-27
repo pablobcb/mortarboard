@@ -3,26 +3,26 @@ require('./util')
 local http   = require('http')
 local router = require('./router')
 
-local requestHandler = function (appMiddlewares, routes)
+local requestHandler = function (app_middlewares, routes)
   return function(req, res)
     -- list of all middlewares that will
     -- sequentially compute the request
-    local requestChain = {}
-    requestChain = table.concatenate(requestChain, appMiddlewares)
+    local request_chain = {}
+    request_chain = table.concatenate(request_chain, app_middlewares)
 
-    local currentMiddlewareIndex = 0
+    local current_middleware_index = 0
 
     -- function that will consume asynchronously 
     -- the middlewares of the request chain
     local function continue()
-      currentMiddlewareIndex = currentMiddlewareIndex + 1
-      local currentMiddleware = requestChain[currentMiddlewareIndex]
+      current_middleware_index = current_middleware_index + 1
+      local current_middleware = request_chain[current_middleware_index]
 
-      if type(currentMiddleware) == 'nil' then
+      if type(current_middleware) == 'nil' then
         return error('can not call "continue" on last middleware of the chain')
       end
 
-      currentMiddleware(req, res, continue)
+      current_middleware(req, res, continue)
     end
 
     continue()
@@ -40,20 +40,20 @@ local createApp = function()
   end
 
  -- auxiliary methods for registering new routes
-  app.get = function (path, routeMiddlewares)
-    router.create(routes, 'GET', path, routeMiddlewares)
+  app.get = function (path, route_middlewares)
+    router.create(routes, 'GET', path, route_middlewares)
   end
 
-  app.post = function (path, routeMiddlewares)
-    router.create(routes, 'POST', path, routeMiddlewares)
+  app.post = function (path, route_middlewares)
+    router.create(routes, 'POST', path, route_middlewares)
   end
 
-  app.put = function (path, routeMiddlewares)
-    router.create(routes, 'PUT', path, routeMiddlewares)
+  app.put = function (path, route_middlewares)
+    router.create(routes, 'PUT', path, route_middlewares)
   end
 
-  app.delete = function (path, routeMiddlewares)
-    router.create(routes, 'DELETE', path, routeMiddlewares)
+  app.delete = function (path, route_middlewares)
+    router.create(routes, 'DELETE', path, route_middlewares)
   end 
 
   -- creates and binds a server to a port
