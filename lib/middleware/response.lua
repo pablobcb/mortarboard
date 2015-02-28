@@ -2,7 +2,6 @@ local json = require('json')
 local HTTP_STATUS = require('../httpstatus')
 
 return function(req, res, done)
-
   res.get = function(header)
     if type(header) ~= 'string' then
       error("'header' parameter must be a string!")
@@ -18,14 +17,18 @@ return function(req, res, done)
       error("'header' parameter must be a a string!")
     end
 
-    if type(header) ~= 'string' then
+    if type(value) == 'number' then
+      value = tostring(value)
+    end
+
+    if type(value) ~= 'string' then
       error("'header value' parameter must be a a string!")
     end
 
     header = header:lower()
     value  = value:lower()
 
-    res.headers[header] = value
+    res:setHeader(header, value)
   end
 
   res.send = function (body)
@@ -33,9 +36,7 @@ return function(req, res, done)
       body = ''
     end
 
-    res:writeHead(res.statusCode, {
-      ["Content-Length"] = #body
-    })
+    res.set('content-length', #body)
 
     res:finish(body)
   end
