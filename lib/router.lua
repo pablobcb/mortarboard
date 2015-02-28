@@ -43,7 +43,7 @@ end
 -- @param path:
 --     [type]: string
 --     [desc]: path to be matched, ex: '/api/customer'
--- @returns table holding the matched route, created with route.create
+-- @return table holding the matched route, created with route.create
 router.match = function(routes, request_method, request_path)
   return table.find(routes, function(route)
     return route.path == request_path and route.method == request_method

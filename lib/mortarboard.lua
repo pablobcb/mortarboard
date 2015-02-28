@@ -11,8 +11,8 @@ local router = require('./router')
 --     [type]: list of functions
 --     [desc]: holds registered middlewares with
 --             app.get(), app.post(), app.put() and app.delete()
--- @returns function
-local requestHandler = function (app_middlewares, routes)
+-- @return function
+local onRequest = function (app_middlewares, routes)
   return function(req, res)
     -- list of all middlewares that together will
     -- sequentially compute the request
@@ -38,7 +38,7 @@ local requestHandler = function (app_middlewares, routes)
 end
 
 -- creates an application instance.
--- @returns table, containing all the app methods
+-- @return table, containing all the app methods
 local createApp = function()
   local app       = {} -- hash
   app.middlewares = {} -- list
@@ -80,8 +80,12 @@ local createApp = function()
   -- @param port:
   --     [type]: number
   app.listen = function (port)
+    if not port then
+     error("'port' is a required parameter!")
+    end
+
     local server = http.createServer(
-      requestHandler(app.middlewares, app.routes)
+      onRequest(app.middlewares, app.routes)
     )
 
     return server:listen(port)

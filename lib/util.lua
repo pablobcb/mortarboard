@@ -112,7 +112,7 @@ function table.filter(t, predicate)
   return out
 end
 
--- returns the FIRST who satisfies the predicate
+-- return the FIRST who satisfies the predicate
 function table.find(t, predicate)
   for _, v in ipairs(t) do
     if predicate(v) then 
