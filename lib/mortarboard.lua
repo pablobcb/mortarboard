@@ -80,7 +80,7 @@ local createApp = function()
   -- @param port:
   --     [type]: number
   app.listen = function (port)
-    if not port then
+    if type(port) ~= 'number' then
      error("'port' is a required parameter!")
     end
 

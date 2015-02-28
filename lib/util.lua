@@ -35,6 +35,10 @@ function table.tostring( tbl )
 end
 
 function table.print (t)
+  if not t then
+    t = {}
+  end
+
   print(table.tostring(t))
 end
 

@@ -1,38 +1,26 @@
 local bodyparser = require('../lib/middleware/bodyparser')
 local raw_body = require('../lib/middleware/rawbody')
 local request = require('../lib/middleware/request')
+local response = require('../lib/middleware/response')
 local mb = require('../lib/mortarboard')
 local app = mb()
 
 app.use(request)
+app.use(response)
 app.use(raw_body)
 
-local m1 = function(req, res, continue)
-  table.print(req.body)
-
-  res:write('I am middleware1!\n')
+local m = function(req, res, continue)
   continue()
 end
+
 
 local m2 = function(req, res, continue)
-  res:write('I am middleware2!\n')
-  continue()
-end
-
-local m3 = function(req, res, continue)
-  res:write('I am middleware3!\n')
-  continue()
-end
-
-local m4 = function(req, res, continue)
-  res:finish('I am middleware4!\n')
+  res.json(req.body)
 end
 
 app.use(bodyparser())
-app.use(m1)
+app.use(m)
 app.use(m2)
-app.use(m3)
-app.use(m4)
 
 --app.get('/teste', {m2, m3, m4})
 

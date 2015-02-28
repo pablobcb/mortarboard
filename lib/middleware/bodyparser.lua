@@ -1,4 +1,4 @@
-local parse_json = require('json').parse
+local json = require('json')
 
 return function (options)
    -- TODO: use options
@@ -8,7 +8,13 @@ return function (options)
   
   return function (req, res, done)
     if req.get('content-type') == 'application/json' then
-      req.body = parse_json(req.raw_body)
+      local body = json.parse(req.raw_body, 1, json.null)
+
+      if not body then
+        return res.sendStatus(400)
+      end
+
+      req.body = body
     end
 
     done()
