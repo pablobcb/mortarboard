@@ -1,13 +1,17 @@
 local bodyparser = require('../lib/middleware/bodyparser')
-local raw_body = require('../lib/middleware/rawbody')
-local request = require('../lib/middleware/request')
-local response = require('../lib/middleware/response')
-local mb = require('../lib/mortarboard')
+local raw_body   = require('../lib/middleware/rawbody')
+local request    = require('../lib/request')
+local response   = require('../lib/response')
+local mb         = require('../lib/mortarboard')
+
 local app = mb()
 
-app.use(request)
-app.use(response)
 app.use(raw_body)
+app.use(function(req, res, done) 
+  request(req)
+  response(res)
+  done()
+end)
 
 local m = function(req, res, continue)
   continue()

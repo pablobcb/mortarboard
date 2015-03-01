@@ -1,7 +1,7 @@
 local json = require('json')
-local HTTP_STATUS = require('../httpstatus')
+local HTTP_STATUS = require('./httpstatus')
 
-return function(req, res, done)
+return function(res)
   res.get = function(header)
     if type(header) ~= 'string' then
       error("'header' parameter must be a string!")
@@ -63,6 +63,4 @@ return function(req, res, done)
   res.sendStatus = function(status)
     res.status(status).send(HTTP_STATUS[status])
   end
-
-  done()
 end
