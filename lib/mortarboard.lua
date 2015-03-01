@@ -12,12 +12,14 @@ local router = require('./router')
 --     [desc]: holds registered middlewares with
 --             app.get(), app.post(), app.put() and app.delete()
 -- @return function
-local onRequest = function (app_middlewares, routes)
+local onRequest = function (app)
   return function(req, res)
     -- list of all middlewares that together will
     -- sequentially compute the request
     local request_chain = {}
-    request_chain = table.concatenate(request_chain, app_middlewares)
+    request_chain = table.concatenate(request_chain, app.middlewares)
+
+    -- here comes the matching
 
     -- function that will consume asynchronously 
     -- the middlewares of the request chain
@@ -25,7 +27,6 @@ local onRequest = function (app_middlewares, routes)
     local function continue()
       current_middleware_index = current_middleware_index + 1
       local current_middleware = request_chain[current_middleware_index]
-
       if type(current_middleware) == 'nil' then
         return error('can not call "continue" on last middleware of the chain')
       end
@@ -85,7 +86,7 @@ local createApp = function()
     end
 
     local server = http.createServer(
-      onRequest(app.middlewares, app.routes)
+      onRequest(app)
     )
 
     return server:listen(port)

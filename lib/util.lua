@@ -124,3 +124,5 @@ function table.find(t, predicate)
     end
   end
 end
+
+--TODO: create assertype function
