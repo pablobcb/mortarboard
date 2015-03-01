@@ -28,5 +28,6 @@ app.use(m2)
 
 --app.get('/teste', {m2, m3, m4})
 
-app.listen(8000)
-print('server up!')
+local port = 8000
+app.listen(port)
+print("[mortarboard]: server listening at http://localhost:" .. port .. "/")
