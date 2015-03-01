@@ -63,4 +63,6 @@ return function(res)
   res.sendStatus = function(status)
     res.status(status).send(HTTP_STATUS[status])
   end
+
+  return res
 end

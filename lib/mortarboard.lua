@@ -1,7 +1,9 @@
 require('./util')
 
-local http   = require('http')
-local router = require('./router')
+local http     = require('http')
+local router   = require('./router')
+local request  = require('./request')
+local response = require('./response')
 
 -- return the handler for all http requests.
 -- @param app_middlewares: 
@@ -14,12 +16,26 @@ local router = require('./router')
 -- @return function
 local onRequest = function (app)
   return function(req, res)
+
+    -- TODO: move this to app module
+    -- creates the request and response API
+    req = request(req)
+    res = response(res)
+
+    local matched_route = router.match(app.routes, req.method, req.path)
+
+    if not matched_route then
+      return res.sendStatus(404)
+    end
+
+    -- parse placehold paramaters such as /foo/:bar
+    req._parseParams(matched_route.path)
+
     -- list of all middlewares that together will
     -- sequentially compute the request
     local request_chain = {}
     request_chain = table.concatenate(request_chain, app.middlewares)
-
-    -- here comes the matching
+    request_chain = table.concatenate(request_chain, matched_route.middlewares)
 
     -- function that will consume asynchronously 
     -- the middlewares of the request chain
@@ -62,19 +78,19 @@ local createApp = function()
   --     [desc]: middlewares to be executed after
   --             the app middlewares for the given path
   app.get = function (path, route_middlewares)
-    router.create(routes, 'GET', path, route_middlewares)
+    router.create(app.routes, 'GET', path, route_middlewares)
   end
 
   app.post = function (path, route_middlewares)
-    router.create(routes, 'POST', path, route_middlewares)
+    router.create(app.routes, 'POST', path, route_middlewares)
   end
 
   app.put = function (path, route_middlewares)
-    router.create(routes, 'PUT', path, route_middlewares)
+    router.create(app.routes, 'PUT', path, route_middlewares)
   end
 
   app.delete = function (path, route_middlewares)
-    router.create(routes, 'DELETE', path, route_middlewares)
+    router.create(app.routes, 'DELETE', path, route_middlewares)
   end 
 
   -- creates and binds a server to a port.
