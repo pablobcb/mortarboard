@@ -43,7 +43,7 @@ return function(res)
 
   res.json = function (body)
     if type(body) ~= 'table' then
-      error("'body' parameter must be a table!")
+      --error("'body' parameter must be a table!")
     end
 
     res.set('content-type' , 'application/json')

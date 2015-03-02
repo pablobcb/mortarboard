@@ -4,6 +4,7 @@ local http     = require('http')
 local router   = require('./router')
 local request  = require('./request')
 local response = require('./response')
+local raw_body = require('./middleware/rawbody')
 
 -- return the handler for all http requests.
 -- @param app_middlewares: 
@@ -17,7 +18,6 @@ local response = require('./response')
 local onRequest = function (app)
   return function(req, res)
 
-    -- TODO: move this to app module
     -- creates the request and response API
     req = request(req)
     res = response(res)
@@ -28,12 +28,14 @@ local onRequest = function (app)
       return res.sendStatus(404)
     end
 
+
     -- parse placehold paramaters such as /foo/:bar
     req._parseParams(matched_route.path)
 
     -- list of all middlewares that together will
     -- sequentially compute the request
     local request_chain = {}
+    
     request_chain = table.concatenate(request_chain, app.middlewares)
     request_chain = table.concatenate(request_chain, matched_route.middlewares)
 
@@ -57,6 +59,7 @@ end
 -- creates an application instance.
 -- @return table, containing all the app methods
 local createApp = function()
+  -- TODO: move this to app module
   local app       = {} -- hash
   app.middlewares = {} -- list
   app.routes      = {} -- list
@@ -68,6 +71,8 @@ local createApp = function()
   app.use = function (middleware)
     table.insert(app.middlewares, middleware)
   end
+
+  app.use(raw_body)
 
   -- auxiliary methods for registering new routes.
   -- @param path:
