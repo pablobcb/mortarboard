@@ -1,8 +1,16 @@
 local qs = require("querystring")
--- creates the request api
+
+-- parses low level data in luvit's request
+-- into a high level http API
+-- @param req: 
+--     [type]: table
+--     [desc]: luvit native 'req' object
+--             app.get(), app.post(), app.put() and app.delete()
+-- @return table
 return function(req)
 
   req.hostname, req.port = req.headers.host:match('([^,]+):([^,]+)')
+
   --req.ip = req.socket.address().ip
   req.ip = req.socket._handle:getpeername().ip
 
@@ -10,9 +18,7 @@ return function(req)
 
   req.path = req.original_url:match('(.-)%?') or req.original_url
 
-  -- aux variable
   local _, querystring = req.original_url:match('([^,]+)?([^,]+)')
-
   if querystring then
     req.query = qs.parse(querystring)
   end
@@ -21,6 +27,11 @@ return function(req)
 
   req.secure = req.protocol == 'https'
 
+  -- return a http header value
+  -- @param header: 
+  --     [type]: string
+  --     [desc]: the http header name
+  -- @return string
   req.get = function(header)
     if type(header) ~= 'string' then
       error("'header' parameter must be a string!")
@@ -31,8 +42,18 @@ return function(req)
     return req.headers[header]
   end
 
-  -- params parse
-
+  -- internal function.
+  -- compares the request path against the matched
+  -- route url and injects in the request object 
+  -- a table containing the parameters :name and values
+  -- ex: 
+  --   request path : /breno/419/magro
+  --   route path   : /breno/:foo/magro
+  --   parsed table : { foo =  "419" }
+  --
+  -- @param route_path: 
+  --     [type]: string
+  --     [desc]: the matched route path
   req._parseParams = function(route_path)
     local params = {}
 

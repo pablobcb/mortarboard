@@ -56,7 +56,7 @@ function table.isarray(tbl)
   return numKeys == numIndices
 end
 
-function table.concatenate(t1, t2)
+function table.merge(t1, t2)
   local out = {}
 
   if (table.isarray(t1) and table.isarray(t2)) then
@@ -77,7 +77,7 @@ function table.flatten(t1)
   for i = 1, #t1 do
     if type(t1[i]) == 'table' then
       local inner_flatten = table.flatten(t1[i])
-      flat = table.concatenate(flat, inner_flatten)
+      flat = table.merge(flat, inner_flatten)
     else
       flat[#flat + 1] = t1[i]
     end

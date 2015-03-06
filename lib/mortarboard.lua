@@ -36,8 +36,8 @@ local onRequest = function (app)
     -- sequentially compute the request
     local request_chain = {}
     
-    request_chain = table.concatenate(request_chain, app.middlewares)
-    request_chain = table.concatenate(request_chain, matched_route.middlewares)
+    request_chain = table.merge(request_chain, app.middlewares)
+    request_chain = table.merge(request_chain, matched_route.middlewares)
 
     -- function that will consume asynchronously 
     -- the middlewares of the request chain
