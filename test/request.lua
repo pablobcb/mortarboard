@@ -1,7 +1,6 @@
 local parse_request = require('../lib/request')
 local tests = {}
 
--- hostname
 local hostname = '123.142.23.141'
 local port = '8080'
 local url = '/breno/419/magro?jerry=jenkins&att=foo%20bar'
