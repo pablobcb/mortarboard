@@ -1,11 +1,10 @@
 local qs = require("querystring")
 
 -- parses low level data in luvit's request
--- into a high level http API
+-- into a high level http API (mortarboard api)
 -- @param req: 
 --     [type]: table
 --     [desc]: luvit native 'req' object
---             app.get(), app.post(), app.put() and app.delete()
 -- @return table
 return function(req)
 
@@ -27,7 +26,8 @@ return function(req)
 
   req.secure = req.protocol == 'https'
 
-  -- return a http header value
+  -- if presents in the req table, returns a 
+  -- http header value, else it returns nil
   -- @param header: 
   --     [type]: string
   --     [desc]: the http header name
