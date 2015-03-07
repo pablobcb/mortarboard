@@ -3,7 +3,7 @@ local router = {}
 -- creates a route for a given a HTTP method and path
 -- @param routes: 
 --     [type]: list of functions
---     [desc]: holds registered middlewares with app.VERB()
+--     [desc]: holds registered middlewares with app.method()
 -- @param request_method:
 --     [type]: string
 --     [desc]: HTTP method associated with the route
@@ -67,7 +67,7 @@ end
 -- finds the matched route for a given method and path.
 -- @param routes: 
 --     [type]: list of functions
---     [desc]: holds registered middlewares with app.VERB()
+--     [desc]: holds registered middlewares with app.method()
 -- @param request_method:
 --     [type]: string
 --     [desc]: HTTP method to be matched

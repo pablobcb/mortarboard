@@ -44,13 +44,21 @@ local onRequest = function (app)
     -- the middlewares of the request chain
     local current_middleware_index = 0
     local function continue()
-      current_middleware_index = current_middleware_index + 1
-      local current_middleware = request_chain[current_middleware_index]
-      if type(current_middleware) == 'nil' then
-        return error('can not call "continue" on last middleware of the chain')
-      end
+      local success, err = pcall(function ()
+        current_middleware_index = current_middleware_index + 1
+        local current_middleware = request_chain[current_middleware_index]
 
-      current_middleware(req, res, continue)
+        if type(current_middleware) == 'nil' then
+          return error('can not call "continue" on last middleware of the chain')
+        end
+
+        current_middleware(req, res, continue)
+      end)
+
+      if not success then 
+        print('[mortarboard]: ERROR -> ' .. err)
+        return res.sendStatus(500)
+      end
     end
 
     continue()
