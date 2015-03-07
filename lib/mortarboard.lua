@@ -1,10 +1,10 @@
 require('./util')
+local _table = require('table')
 
 local http     = require('http')
 local router   = require('./router')
 local request  = require('./request')
 local response = require('./response')
-local raw_body = require('./middleware/rawbody')
 local logger   = require('./middleware/logger')
 
 -- return the handler for all http requests.
@@ -70,7 +70,22 @@ end
 local createApp = function()
   -- TODO: move this to app module
   local app       = {} -- hash
-  app.middlewares = {} -- list
+  app.middlewares = {
+    function (req, res, done)
+      local payload = {}
+      local length  = 0
+
+      req:on('data', function (chunk, len)
+        length = length + 1
+        payload[length] = chunk
+      end)
+
+      req:on('end', function ()
+        req.raw_body = _table.concat(payload)
+        done()
+      end)
+    end
+  } -- list
   app.routes      = {} -- list
 
   -- register a application middleware, ORDER MATTERS.
@@ -82,7 +97,6 @@ local createApp = function()
   end
 
   -- app config
-  app.use(raw_body)
   app.use(logger)
 
   -- auxiliary methods for registering new routes.
@@ -107,13 +121,13 @@ local createApp = function()
 
   app.delete = function (path, route_middlewares)
     router.create(app.routes, 'DELETE', path, route_middlewares)
-  end 
+  end
 
   app.method = function (method)
     return  function (path, route_middlewares)
       router.create(app.routes, method, path, route_middlewares)
     end
-  end 
+  end
 
   -- creates and binds a server to a port.
   -- @param port:
