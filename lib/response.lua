@@ -21,7 +21,7 @@ return function(res)
 
     header = header:lower()
     
-    return req.headers[header]
+    return res.headers[header]
   end
 
   -- sets a http header in the response table

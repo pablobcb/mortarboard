@@ -5,6 +5,7 @@ local router   = require('./router')
 local request  = require('./request')
 local response = require('./response')
 local raw_body = require('./middleware/rawbody')
+local logger   = require('./middleware/logger')
 
 -- return the handler for all http requests.
 -- @param app_middlewares: 
@@ -72,7 +73,9 @@ local createApp = function()
     table.insert(app.middlewares, middleware)
   end
 
+  -- app config
   app.use(raw_body)
+  app.use(logger)
 
   -- auxiliary methods for registering new routes.
   -- @param path:
@@ -96,6 +99,12 @@ local createApp = function()
 
   app.delete = function (path, route_middlewares)
     router.create(app.routes, 'DELETE', path, route_middlewares)
+  end 
+
+  app.method = function (method)
+    return  function (path, route_middlewares)
+      router.create(app.routes, method, path, route_middlewares)
+    end
   end 
 
   -- creates and binds a server to a port.

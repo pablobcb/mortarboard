@@ -8,6 +8,7 @@ local app = mb()
 app.use(bodyparser())
 
 app.post('/foo/:a/bar', function(req, res)
+  --[[
   p("path parameteres: " .. req.params.a)
 
   p('querystring parameters:')
@@ -19,9 +20,10 @@ app.post('/foo/:a/bar', function(req, res)
   p('json body:')
   p(req.body)
 
+  ]]
   res.json(req.body)
-end)
-
+  p('FIRST')
+end) 
 
 local port = 8000
 app.listen(port)
