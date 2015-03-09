@@ -4,25 +4,21 @@ local mb         = require('../lib/mortarboard')
 local app = mb()
 
 
--- to parse jason and etc
+-- to parse json and etc
 app.use(bodyparser())
 
 app.post('/foo/:a/bar', function(req, res)
-  --[[
-  p("path parameteres: " .. req.params.a)
+  print("path parameteres: " .. req.params.a)
 
-  p('querystring parameters:')
-  p(req.query)
+  print('querystring parameters:')
+  print(req.query)
 
-  p('raw body:')
-  p(req.raw_body)
+  print('raw body:')
+  print(req.raw_body)
 
-  p('json body:')
-  p(req.body)
+  print('json body:')
+  print(req.body)
 
-  ]]
-  res.json(req.body)
-  p('FIRST')
 end) 
 
 local port = 8000
